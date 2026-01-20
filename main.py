@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 PRODUCTION-READY TELEGRAM EARNING BOT
-Single-file implementation with admin panel, anti-fraud, and full task system
-Deployable on any VPS/Cloud server including Render, Railway, PythonAnywhere, Heroku
+Compatible with all aiogram 3.x versions
 """
 
 import asyncio
@@ -17,7 +16,31 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Any
 from enum import Enum
 
-# Import aiogram with fallback for web hosting compatibility
+# ==================== CONFIGURATION ====================
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8502536019:AAFcuwfD_tDnlMGNwP0jQapNsakJIRjaSfc")
+ADMIN_IDS = os.getenv("ADMIN_IDS", "6375918223,6337650436")
+DATABASE_PATH = os.getenv("DATABASE_PATH", "earning_bot.db")
+LOG_CHANNEL_ID = os.getenv("LOG_CHANNEL_ID", "")
+
+# Parse ADMIN_IDS safely
+admin_ids_list = []
+if ADMIN_IDS:
+    try:
+        admin_ids_list = [int(x.strip()) for x in ADMIN_IDS.split(",") if x.strip().isdigit()]
+    except:
+        admin_ids_list = []
+if not admin_ids_list:
+    admin_ids_list = [6375918223, 6337650436]
+
+# Bot configuration
+MINIMUM_WITHDRAW = float(os.getenv("MINIMUM_WITHDRAW", "50.0"))
+REFERRAL_BONUS = float(os.getenv("REFERRAL_BONUS", "10.0"))
+DAILY_TASK_LIMIT = int(os.getenv("DAILY_TASK_LIMIT", "20"))
+TASK_COOLDOWN = int(os.getenv("TASK_COOLDOWN", "30"))
+PENALTY_MULTIPLIER = float(os.getenv("PENALTY_MULTIPLIER", "2.0"))
+WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")
+
+# Try to import aiogram
 try:
     from aiogram import Bot, Dispatcher, types, F
     from aiogram.filters import Command, CommandStart
@@ -31,44 +54,14 @@ try:
     )
     from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
     from aiogram.enums import ParseMode
-    from aiogram.client.default import DefaultBotProperties
+    
+    # Initialize bot - compatible with all aiogram 3.x versions
+    bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
+    
 except ImportError as e:
     print(f"Error importing aiogram: {e}")
-    print("Please install aiogram: pip install aiogram")
+    print("Please install: pip install aiogram==3.10.0")
     sys.exit(1)
-
-# ==================== CONFIGURATION ====================
-# Use environment variables (compatible with all hosting platforms)
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8502536019:AAFcuwfD_tDnlMGNwP0jQapNsakJIRjaSfc")
-ADMIN_IDS = os.getenv("ADMIN_IDS", "6337650436,6375918223")
-DATABASE_PATH = os.getenv("DATABASE_PATH", "earning_bot.db")
-LOG_CHANNEL_ID = os.getenv("LOG_CHANNEL_ID", "")
-
-# Parse ADMIN_IDS safely
-admin_ids_list = []
-if ADMIN_IDS:
-    try:
-        admin_ids_list = [int(x.strip()) for x in ADMIN_IDS.split(",") if x.strip().isdigit()]
-    except:
-        admin_ids_list = []
-if not admin_ids_list:
-    admin_ids_list = [6337650436,6375918223]  # Default admin ID (change this)
-
-# Bot configuration (adjustable via environment variables)
-MINIMUM_WITHDRAW = float(os.getenv("MINIMUM_WITHDRAW", "50.0"))
-REFERRAL_BONUS = float(os.getenv("REFERRAL_BONUS", "10.0"))
-DAILY_TASK_LIMIT = int(os.getenv("DAILY_TASK_LIMIT", "20"))
-TASK_COOLDOWN = int(os.getenv("TASK_COOLDOWN", "30"))
-PENALTY_MULTIPLIER = float(os.getenv("PENALTY_MULTIPLIER", "2.0"))
-WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")  # For platforms that require webhooks
-
-# Initialize bot and dispatcher (with compatibility settings)
-try:
-    # For newer versions of aiogram
-    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-except:
-    # For older versions
-    bot = Bot(token=BOT_TOKEN)
 
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
