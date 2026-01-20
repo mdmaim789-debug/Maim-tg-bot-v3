@@ -1,0 +1,10 @@
+name: telegram-bot
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+    - aiogram==3.10.0
+    - aiohttp==3.9.1
