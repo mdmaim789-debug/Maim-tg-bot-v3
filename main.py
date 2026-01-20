@@ -32,8 +32,8 @@ from aiogram.client.session.aiohttp import AiohttpSession
 
 # ==================== CONFIGURATION ====================
 # Use environment variables in production
-BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
-ADMIN_IDS = list(map(int, os.getenv("ADMIN_IDS", "123456789,987654321").split(",")))
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8502536019:AAFcuwfD_tDnlMGNwP0jQapNsakJIRjaSfc")
+ADMIN_IDS = list(map(int, os.getenv("ADMIN_IDS", "6337650436,6375918223").split(",")))
 DATABASE_PATH = os.getenv("DATABASE_PATH", "earning_bot.db")
 LOG_CHANNEL_ID = os.getenv("LOG_CHANNEL_ID", "-1001234567890")
 
