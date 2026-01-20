@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 PRODUCTION-READY TELEGRAM EARNING BOT
-Compatible with all aiogram 3.x versions
 """
 
 import asyncio
@@ -14,11 +13,10 @@ import uuid
 import sys
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Any
-from enum import Enum
 
 # ==================== CONFIGURATION ====================
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8502536019:AAFcuwfD_tDnlMGNwP0jQapNsakJIRjaSfc")
-ADMIN_IDS = os.getenv("ADMIN_IDS", "6375918223,6337650436")
+ADMIN_IDS = os.getenv("ADMIN_IDS", "6337650436,6375918223")
 DATABASE_PATH = os.getenv("DATABASE_PATH", "earning_bot.db")
 LOG_CHANNEL_ID = os.getenv("LOG_CHANNEL_ID", "")
 
@@ -40,7 +38,7 @@ TASK_COOLDOWN = int(os.getenv("TASK_COOLDOWN", "30"))
 PENALTY_MULTIPLIER = float(os.getenv("PENALTY_MULTIPLIER", "2.0"))
 WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")
 
-# Try to import aiogram
+# Try to import aiogram with new syntax
 try:
     from aiogram import Bot, Dispatcher, types, F
     from aiogram.filters import Command, CommandStart
@@ -55,12 +53,15 @@ try:
     from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
     from aiogram.enums import ParseMode
     
-    # Initialize bot - compatible with all aiogram 3.x versions
-    bot = Bot(token=BOT_TOKEN, parse_mode=ParseMode.HTML)
+    # For aiogram 3.7.0+ - NEW SYNTAX
+    from aiogram.client.default import DefaultBotProperties
+    
+    # Initialize bot with new syntax
+    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     
 except ImportError as e:
     print(f"Error importing aiogram: {e}")
-    print("Please install: pip install aiogram==3.10.0")
+    print("Please install: pip install aiogram>=3.7.0")
     sys.exit(1)
 
 storage = MemoryStorage()
